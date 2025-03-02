@@ -1,0 +1,86 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// User model for authentication and account management
+model User {
+  id            String    @id @default(cuid())
+  name          String?
+  email         String    @unique
+  password      String
+  role          String    @default("user")
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+  websites      Website[]
+}
+
+// Website model for connected sites
+model Website {
+  id          String    @id @default(cuid())
+  userId      String
+  domain      String
+  name        String
+  apiKey      String    @unique @default(cuid())
+  active      Boolean   @default(true)
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  elements    Element[]
+  user        User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+}
+
+// Element model for targeted page elements
+model Element {
+  id          String    @id @default(cuid())
+  websiteId   String
+  selector    String
+  description String?
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  variants    Variant[]
+  website     Website   @relation(fields: [websiteId], references: [id], onDelete: Cascade)
+
+  @@index([websiteId])
+}
+
+// Variant model for element content variations
+model Variant {
+  id          String      @id @default(cuid())
+  elementId   String
+  name        String
+  content     String
+  isDefault   Boolean     @default(false)
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
+  conditions  Condition[]
+  element     Element     @relation(fields: [elementId], references: [id], onDelete: Cascade)
+
+  @@index([elementId])
+}
+
+// Condition model for variant display rules
+model Condition {
+  id            String    @id @default(cuid())
+  variantId     String
+  conditionType String    // e.g., user_role, login_status, referrer, ad_source, device_type
+  operator      String    // e.g., equals, contains, starts_with, regex
+  value         String
+  priority      Int       @default(0)
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+  variant       Variant   @relation(fields: [variantId], references: [id], onDelete: Cascade)
+
+  @@index([variantId])
+}
