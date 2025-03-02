@@ -4,6 +4,7 @@ import { notFound } from 'next/navigation';
 import prisma from '@/lib/prisma';
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@/app/api/auth/[...nextauth]/route';
+import { Button } from '@/components/ui/button';
 
 export const metadata: Metadata = {
   title: 'Website Details - Element Variants',
@@ -64,37 +65,33 @@ export default async function WebsiteDetailPage({
   );
   
   return (
-    <div className="space-y-6">
+    <div className="container mx-auto py-6 space-y-6">
       <div className="flex items-center justify-between">
         <h1 className="text-2xl font-bold">{website.name}</h1>
-        <div className="flex space-x-3">
+        <div className="flex gap-3">
           <Link
             href={`/dashboard/websites/${website.id}/edit`}
-            className="rounded-md bg-white px-4 py-2 text-sm font-medium text-gray-700 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50"
-            aria-label={`Edit ${website.name}`}
           >
-            Edit
+            <Button variant="outline">Edit Website</Button>
           </Link>
           <Link
-            href={`/dashboard/websites/${website.id}/elements/new`}
-            className="rounded-md bg-indigo-600 px-4 py-2 text-sm font-medium text-white hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
-            aria-label="Add new element"
+            href={`/dashboard/websites/${website.id}/elements`}
           >
-            Add Element
+            <Button>Manage Elements</Button>
           </Link>
         </div>
       </div>
       
       <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
-        <div className="rounded-lg bg-white p-6 shadow-md">
-          <h2 className="text-lg font-medium text-gray-900">Website Details</h2>
+        <div className="border rounded-lg p-6 bg-card">
+          <h2 className="text-lg font-medium">Website Details</h2>
           <dl className="mt-4 space-y-4">
             <div>
-              <dt className="text-sm font-medium text-gray-500">Domain</dt>
-              <dd className="mt-1 text-sm text-gray-900">{website.domain}</dd>
+              <dt className="text-sm font-medium text-muted-foreground">Domain</dt>
+              <dd className="mt-1 text-sm">{website.domain}</dd>
             </div>
             <div>
-              <dt className="text-sm font-medium text-gray-500">Status</dt>
+              <dt className="text-sm font-medium text-muted-foreground">Status</dt>
               <dd className="mt-1 text-sm">
                 <span
                   className={`inline-flex rounded-full px-2 text-xs font-semibold leading-5 ${
@@ -108,45 +105,44 @@ export default async function WebsiteDetailPage({
               </dd>
             </div>
             <div>
-              <dt className="text-sm font-medium text-gray-500">API Key</dt>
-              <dd className="mt-1 text-sm font-mono text-gray-900 break-all">
+              <dt className="text-sm font-medium text-muted-foreground">API Key</dt>
+              <dd className="mt-1 text-sm font-mono break-all">
                 {website.apiKey}
               </dd>
             </div>
             <div>
-              <dt className="text-sm font-medium text-gray-500">Created</dt>
-              <dd className="mt-1 text-sm text-gray-900">
+              <dt className="text-sm font-medium text-muted-foreground">Created</dt>
+              <dd className="mt-1 text-sm">
                 {new Date(website.createdAt).toLocaleDateString()}
               </dd>
             </div>
           </dl>
         </div>
         
-        <div className="rounded-lg bg-white p-6 shadow-md">
-          <h2 className="text-lg font-medium text-gray-900">Statistics</h2>
+        <div className="border rounded-lg p-6 bg-card">
+          <h2 className="text-lg font-medium">Statistics</h2>
           <dl className="mt-4 grid grid-cols-1 gap-4">
-            <div className="rounded-lg border border-gray-200 bg-gray-50 p-4">
-              <dt className="text-sm font-medium text-gray-500">Elements</dt>
-              <dd className="mt-1 text-3xl font-semibold text-indigo-600">{elementCount}</dd>
+            <div className="rounded-lg border bg-muted/50 p-4">
+              <dt className="text-sm font-medium text-muted-foreground">Elements</dt>
+              <dd className="mt-1 text-3xl font-semibold text-primary">{elementCount}</dd>
             </div>
-            <div className="rounded-lg border border-gray-200 bg-gray-50 p-4">
-              <dt className="text-sm font-medium text-gray-500">Variants</dt>
-              <dd className="mt-1 text-3xl font-semibold text-indigo-600">{variantCount}</dd>
+            <div className="rounded-lg border bg-muted/50 p-4">
+              <dt className="text-sm font-medium text-muted-foreground">Variants</dt>
+              <dd className="mt-1 text-3xl font-semibold text-primary">{variantCount}</dd>
             </div>
           </dl>
         </div>
         
-        <div className="rounded-lg bg-white p-6 shadow-md">
-          <h2 className="text-lg font-medium text-gray-900">Integration</h2>
+        <div className="border rounded-lg p-6 bg-card">
+          <h2 className="text-lg font-medium">Integration</h2>
           <div className="mt-4">
             <Link
               href={`/dashboard/websites/${website.id}/code`}
-              className="text-sm font-medium text-indigo-600 hover:text-indigo-500"
-              aria-label="Get integration code"
+              className="inline-flex items-center rounded-md bg-primary/10 px-3 py-2 text-sm font-medium text-primary hover:bg-primary/20"
             >
               Get Integration Snippet
             </Link>
-            <p className="mt-2 text-sm text-gray-500">
+            <p className="mt-2 text-sm text-muted-foreground">
               Add our JavaScript snippet to your website to enable content variants.
             </p>
           </div>
@@ -154,9 +150,15 @@ export default async function WebsiteDetailPage({
       </div>
       
       <div>
-        <h2 className="text-xl font-semibold">Elements</h2>
+        <div className="flex justify-between items-center mb-4">
+          <h2 className="text-xl font-bold">Elements</h2>
+          <Link href={`/dashboard/websites/${website.id}/elements`}>
+            <Button variant="outline" size="sm">View All Elements</Button>
+          </Link>
+        </div>
+        
         {elementCount === 0 ? (
-          <div className="mt-4 rounded-md bg-yellow-50 p-4">
+          <div className="border border-yellow-200 rounded-md bg-yellow-50 p-4">
             <div className="flex">
               <div className="ml-3">
                 <h3 className="text-sm font-medium text-yellow-800">No elements found</h3>
@@ -168,7 +170,6 @@ export default async function WebsiteDetailPage({
                   <Link
                     href={`/dashboard/websites/${website.id}/elements/new`}
                     className="mt-2 inline-block font-medium text-yellow-800 underline"
-                    aria-label="Add a new element"
                   >
                     Add your first element
                   </Link>
@@ -177,17 +178,17 @@ export default async function WebsiteDetailPage({
             </div>
           </div>
         ) : (
-          <div className="mt-4 overflow-hidden rounded-lg bg-white shadow">
-            <table className="min-w-full divide-y divide-gray-200">
-              <thead className="bg-gray-50">
+          <div className="border rounded-lg overflow-hidden">
+            <table className="w-full divide-y">
+              <thead className="bg-muted">
                 <tr>
-                  <th scope="col" className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">
+                  <th scope="col" className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted-foreground">
                     Selector
                   </th>
-                  <th scope="col" className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">
+                  <th scope="col" className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted-foreground">
                     Description
                   </th>
-                  <th scope="col" className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">
+                  <th scope="col" className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted-foreground">
                     Variants
                   </th>
                   <th scope="col" className="relative px-6 py-3">
@@ -195,38 +196,35 @@ export default async function WebsiteDetailPage({
                   </th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-gray-200 bg-white">
+              <tbody className="divide-y bg-background">
                 {website.elements.map((element) => (
-                  <tr key={element.id}>
-                    <td className="whitespace-nowrap px-6 py-4 text-sm font-mono text-gray-900">
+                  <tr key={element.id} className="hover:bg-muted/50">
+                    <td className="whitespace-nowrap px-6 py-4 text-sm font-mono">
                       {element.selector}
                     </td>
-                    <td className="px-6 py-4 text-sm text-gray-500">
+                    <td className="px-6 py-4 text-sm text-muted-foreground">
                       {element.description || '—'}
                     </td>
-                    <td className="whitespace-nowrap px-6 py-4 text-sm text-gray-500">
+                    <td className="whitespace-nowrap px-6 py-4 text-sm text-muted-foreground">
                       {element.variants.length}
                     </td>
                     <td className="whitespace-nowrap px-6 py-4 text-right text-sm font-medium">
                       <div className="flex justify-end space-x-3">
                         <Link
-                          href={`/dashboard/elements/${element.id}`}
-                          className="text-indigo-600 hover:text-indigo-900"
-                          aria-label={`View element details`}
+                          href={`/dashboard/websites/${website.id}/elements/${element.id}`}
+                          className="text-primary hover:text-primary/80"
                         >
                           View
                         </Link>
                         <Link
-                          href={`/dashboard/elements/${element.id}/edit`}
-                          className="text-amber-600 hover:text-amber-900"
-                          aria-label={`Edit element`}
+                          href={`/dashboard/websites/${website.id}/elements/${element.id}/edit`}
+                          className="text-amber-600 hover:text-amber-800"
                         >
                           Edit
                         </Link>
                         <Link
-                          href={`/dashboard/elements/${element.id}/variants/new`}
-                          className="text-blue-600 hover:text-blue-900"
-                          aria-label={`Add variant`}
+                          href={`/dashboard/websites/${website.id}/elements/${element.id}/variants/new`}
+                          className="text-blue-600 hover:text-blue-800"
                         >
                           Add Variant
                         </Link>

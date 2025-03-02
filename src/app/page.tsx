@@ -1,100 +1,120 @@
+import { Button } from "@/components/ui/button";
+import { getServerSession } from "next-auth";
 import Image from "next/image";
+import Link from "next/link";
+import { redirect } from "next/navigation";
+import { authOptions } from "./api/auth/[...nextauth]/route";
 
-export default function Home() {
+export default async function Home() {
+  // Check if user is authenticated, redirect to dashboard if yes
+  const session = await getServerSession(authOptions);
+  
+  if (session) {
+    redirect("/dashboard");
+  }
+  
   return (
-    <div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
-      <main className="flex flex-col gap-8 row-start-2 items-center sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol className="list-inside list-decimal text-sm text-center sm:text-left font-[family-name:var(--font-geist-mono)]">
-          <li className="mb-2">
-            Get started by editing{" "}
-            <code className="bg-black/[.05] dark:bg-white/[.06] px-1 py-0.5 rounded font-semibold">
-              src/app/page.tsx
-            </code>
-            .
-          </li>
-          <li>Save and see your changes instantly.</li>
-        </ol>
-
-        <div className="flex gap-4 items-center flex-col sm:flex-row">
-          <a
-            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
-            />
-            Deploy now
-          </a>
-          <a
-            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:min-w-44"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Read our docs
-          </a>
+    <div className="flex min-h-screen flex-col">
+      {/* Header */}
+      <header className="border-b border-border">
+        <div className="container mx-auto py-4 px-6 flex justify-between items-center">
+          <div className="flex items-center gap-2">
+            <div className="w-8 h-8 rounded-full bg-primary flex items-center justify-center">
+              <span className="text-primary-foreground font-bold">EV</span>
+            </div>
+            <h1 className="text-xl font-bold">Element Variants</h1>
+          </div>
+          <nav className="flex items-center gap-4">
+            <Link href="/login" className="text-muted-foreground hover:text-foreground">
+              Login
+            </Link>
+            <Link href="/register">
+              <Button>Sign Up</Button>
+            </Link>
+          </nav>
         </div>
-      </main>
-      <footer className="row-start-3 flex gap-6 flex-wrap items-center justify-center">
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
-          />
-          Learn
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
+      </header>
+      
+      {/* Hero Section */}
+      <section className="flex-1 bg-gradient-to-b from-background to-muted/20">
+        <div className="container mx-auto px-6 py-12 md:py-24 flex flex-col md:flex-row items-center gap-12">
+          <div className="md:w-1/2 space-y-6">
+            <h2 className="text-4xl md:text-5xl font-bold tracking-tight">
+              Create dynamic content variants for your website
+            </h2>
+            <p className="text-xl text-muted-foreground">
+              Personalize your website content based on user behavior, demographics,
+              and interactions without changing your codebase.
+            </p>
+            <div className="flex flex-col sm:flex-row gap-4 pt-4">
+              <Link href="/register">
+                <Button size="lg" className="w-full sm:w-auto">Get Started</Button>
+              </Link>
+              <Link href="/login">
+                <Button variant="outline" size="lg" className="w-full sm:w-auto">
+                  Login to Dashboard
+                </Button>
+              </Link>
+            </div>
+          </div>
+          <div className="md:w-1/2 flex justify-center">
+            <div className="relative w-full max-w-md aspect-video rounded-lg overflow-hidden border shadow-lg">
+              <div className="absolute inset-0 bg-gradient-to-br from-primary/20 to-secondary/20 flex items-center justify-center">
+                <div className="text-center space-y-2">
+                  <div className="w-16 h-16 mx-auto rounded-full bg-primary/10 flex items-center justify-center">
+                    <span className="text-2xl font-bold text-primary">EV</span>
+                  </div>
+                  <p className="font-medium">Element Variants Dashboard</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+      
+      {/* Features Section */}
+      <section className="py-12 bg-muted/30">
+        <div className="container mx-auto px-6">
+          <h3 className="text-2xl font-bold text-center mb-12">Key Features</h3>
+          <div className="grid md:grid-cols-3 gap-8">
+            <div className="bg-background p-6 rounded-lg border">
+              <div className="w-12 h-12 rounded-md bg-primary/10 flex items-center justify-center mb-4">
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 5a1 1 0 011-1h14a1 1 0 011 1v2a1 1 0 01-1 1H5a1 1 0 01-1-1V5z" />
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 13a1 1 0 011-1h6a1 1 0 011 1v6a1 1 0 01-1 1H5a1 1 0 01-1-1v-6z" />
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 13a1 1 0 011-1h2a1 1 0 011 1v6a1 1 0 01-1 1h-2a1 1 0 01-1-1v-6z" />
+                </svg>
+              </div>
+              <h4 className="text-xl font-medium mb-2">Easy Integration</h4>
+              <p className="text-muted-foreground">Add a single line of code to your website and start creating content variants instantly.</p>
+            </div>
+            <div className="bg-background p-6 rounded-lg border">
+              <div className="w-12 h-12 rounded-md bg-primary/10 flex items-center justify-center mb-4">
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                </svg>
+              </div>
+              <h4 className="text-xl font-medium mb-2">Conditional Logic</h4>
+              <p className="text-muted-foreground">Display different content based on user location, time, device, referrer, and more.</p>
+            </div>
+            <div className="bg-background p-6 rounded-lg border">
+              <div className="w-12 h-12 rounded-md bg-primary/10 flex items-center justify-center mb-4">
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+                </svg>
+              </div>
+              <h4 className="text-xl font-medium mb-2">Real-time Analytics</h4>
+              <p className="text-muted-foreground">Track performance of different content variants to optimize user engagement.</p>
+            </div>
+          </div>
+        </div>
+      </section>
+      
+      {/* Footer */}
+      <footer className="py-8 border-t border-border">
+        <div className="container mx-auto px-6 text-center text-muted-foreground">
+          <p>© {new Date().getFullYear()} Element Variants. All rights reserved.</p>
+        </div>
       </footer>
     </div>
   );
