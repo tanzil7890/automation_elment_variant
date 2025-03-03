@@ -1,34 +1,33 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
-import { authOptions } from "../auth/[...nextauth]/route";
+import { authOptions } from "@/lib/auth";
 import prisma from "@/lib/prisma";
 
-// GET /api/elements - Get all elements for authenticated user
+// GET /api/elements - List elements for a website
 export async function GET(request: NextRequest) {
   try {
     // Check authentication
     const session = await getServerSession(authOptions);
-    if (!session || !session.user) {
+    if (!session?.user) {
       return NextResponse.json(
         { error: "Unauthorized" },
         { status: 401 }
       );
     }
 
-    // Parse query parameters
+    // Get websiteId from query parameter
     const { searchParams } = new URL(request.url);
     const websiteId = searchParams.get("websiteId");
 
-    // Validate required parameters
     if (!websiteId) {
       return NextResponse.json(
-        { error: "websiteId parameter is required" },
+        { error: "Website ID is required" },
         { status: 400 }
       );
     }
 
-    // Verify the website belongs to the authenticated user
-    const website = await prisma.website.findFirst({
+    // Verify website belongs to the user
+    const website = await prisma.website.findUnique({
       where: {
         id: websiteId,
         userId: session.user.id,
@@ -37,31 +36,36 @@ export async function GET(request: NextRequest) {
 
     if (!website) {
       return NextResponse.json(
-        { error: "Website not found or not owned by user" },
+        { error: "Website not found or you don't have access" },
         { status: 404 }
       );
     }
 
-    // Fetch elements with basic variant info
+    // Fetch elements for the website with variant counts
     const elements = await prisma.element.findMany({
       where: {
-        websiteId: websiteId,
+        websiteId,
       },
       orderBy: {
         createdAt: "desc",
       },
       include: {
-        variants: {
+        _count: {
           select: {
-            id: true,
-            name: true,
-            isDefault: true,
-          }
+            variants: true,
+          },
         },
       },
     });
 
-    return NextResponse.json(elements);
+    // Map to include variant counts
+    const elementsWithCounts = elements.map(element => ({
+      ...element,
+      variantsCount: element._count.variants,
+      _count: undefined,
+    }));
+
+    return NextResponse.json(elementsWithCounts);
   } catch (error) {
     console.error("Error fetching elements:", error);
     return NextResponse.json(
@@ -76,7 +80,7 @@ export async function POST(request: NextRequest) {
   try {
     // Check authentication
     const session = await getServerSession(authOptions);
-    if (!session || !session.user) {
+    if (!session?.user) {
       return NextResponse.json(
         { error: "Unauthorized" },
         { status: 401 }
@@ -85,18 +89,18 @@ export async function POST(request: NextRequest) {
 
     // Parse request body
     const body = await request.json();
-    const { websiteId, selector, description } = body;
+    const { name, selector, websiteId } = body;
 
     // Validate required fields
-    if (!websiteId || !selector) {
+    if (!name || !selector || !websiteId) {
       return NextResponse.json(
-        { error: "websiteId and selector are required" },
+        { error: "Name, selector, and websiteId are required" },
         { status: 400 }
       );
     }
 
-    // Verify the website belongs to the authenticated user
-    const website = await prisma.website.findFirst({
+    // Verify website belongs to the user
+    const website = await prisma.website.findUnique({
       where: {
         id: websiteId,
         userId: session.user.id,
@@ -105,7 +109,7 @@ export async function POST(request: NextRequest) {
 
     if (!website) {
       return NextResponse.json(
-        { error: "Website not found or not owned by user" },
+        { error: "Website not found or you don't have access" },
         { status: 404 }
       );
     }
@@ -113,20 +117,20 @@ export async function POST(request: NextRequest) {
     // Create the element
     const element = await prisma.element.create({
       data: {
-        websiteId,
+        name,
         selector,
-        description: description || "",
+        websiteId,
       },
     });
 
-    // Create a default variant for the element
+    // Create default variant for the element
     await prisma.variant.create({
       data: {
-        elementId: element.id,
-        name: "Default",
-        content: "<!-- Default content -->",
+        name: "Default Variant",
+        content: "", // Empty content initially
         isDefault: true,
-      },
+        elementId: element.id,
+      }
     });
 
     return NextResponse.json(element, { status: 201 });

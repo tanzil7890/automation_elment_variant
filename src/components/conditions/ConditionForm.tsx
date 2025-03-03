@@ -1,3 +1,5 @@
+"use client";
+
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
@@ -71,24 +73,19 @@ const conditionFormSchema = z.object({
 type ConditionFormValues = z.infer<typeof conditionFormSchema>;
 
 interface ConditionFormProps {
+  elementId: string;
+  variantId: string;
+  id: string;
   condition?: {
     id: string;
-    conditionType: string;
+    name: string;
+    type: string;
     operator: string;
     value: string;
-    priority: number;
   };
-  variantId: string;
-  elementId: string;
-  websiteId: string;
 }
 
-export default function ConditionForm({
-  condition,
-  variantId,
-  elementId,
-  websiteId,
-}: ConditionFormProps) {
+export default function ConditionForm({ elementId, variantId, id, condition }: ConditionFormProps) {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const router = useRouter();
   const { toast } = useToast();
@@ -242,7 +239,7 @@ export default function ConditionForm({
       });
 
       // Redirect to conditions list
-      router.push(`/dashboard/websites/${websiteId}/elements/${elementId}/variants/${variantId}/conditions`);
+      router.push(`/dashboard/websites/${id}/elements/${elementId}/variants/${variantId}/conditions`);
       router.refresh(); // Refresh the page to show updated data
     } catch (error) {
       console.error("Error saving condition:", error);

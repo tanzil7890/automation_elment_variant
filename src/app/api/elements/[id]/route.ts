@@ -1,57 +1,61 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
-import { authOptions } from "../../auth/[...nextauth]/route";
+import { authOptions } from "@/lib/auth";
 import prisma from "@/lib/prisma";
 
-// GET /api/elements/[id] - Get element details with variants
+interface Params {
+  id: string;
+}
+
+// GET /api/elements/[id] - Get a specific element
 export async function GET(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Params }
 ) {
   try {
     // Check authentication
     const session = await getServerSession(authOptions);
-    if (!session || !session.user) {
+    if (!session?.user) {
       return NextResponse.json(
         { error: "Unauthorized" },
         { status: 401 }
       );
     }
 
-    const elementId = params.id;
+    const { id } = params;
 
-    // Find element and check if it belongs to the user
-    const element = await prisma.element.findFirst({
+    // Find the element and verify ownership
+    const element = await prisma.element.findUnique({
       where: {
-        id: elementId,
-        website: {
-          userId: session.user.id
-        }
+        id,
       },
       include: {
-        variants: {
-          include: {
-            conditions: true
-          }
-        },
         website: {
           select: {
-            id: true,
-            name: true,
-            domain: true
-          }
-        }
-      }
+            userId: true,
+          },
+        },
+      },
     });
 
     if (!element) {
       return NextResponse.json(
-        { error: "Element not found or not owned by user" },
+        { error: "Element not found" },
         { status: 404 }
       );
     }
 
-    return NextResponse.json(element);
+    // Check if user owns the website that contains this element
+    if (element.website.userId !== session.user.id) {
+      return NextResponse.json(
+        { error: "You don't have access to this element" },
+        { status: 403 }
+      );
+    }
+
+    // Return the element without the website data
+    const { website, ...elementData } = element;
+    return NextResponse.json(elementData);
   } catch (error) {
     console.error("Error fetching element:", error);
     return NextResponse.json(
@@ -61,59 +65,71 @@ export async function GET(
   }
 }
 
-// PUT /api/elements/[id] - Update element
+// PUT /api/elements/[id] - Update a specific element
 export async function PUT(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Params }
 ) {
   try {
     // Check authentication
     const session = await getServerSession(authOptions);
-    if (!session || !session.user) {
+    if (!session?.user) {
       return NextResponse.json(
         { error: "Unauthorized" },
         { status: 401 }
       );
     }
 
-    const elementId = params.id;
+    const { id } = params;
     const body = await request.json();
-    const { selector, description } = body;
+    const { name, selector } = body;
 
     // Validate required fields
-    if (!selector) {
+    if (!name || !selector) {
       return NextResponse.json(
-        { error: "selector is required" },
+        { error: "Name and selector are required" },
         { status: 400 }
       );
     }
 
-    // Find element and check if it belongs to the user
-    const existingElement = await prisma.element.findFirst({
+    // Find the element and verify ownership
+    const element = await prisma.element.findUnique({
       where: {
-        id: elementId,
+        id,
+      },
+      include: {
         website: {
-          userId: session.user.id
-        }
-      }
+          select: {
+            userId: true,
+          },
+        },
+      },
     });
 
-    if (!existingElement) {
+    if (!element) {
       return NextResponse.json(
-        { error: "Element not found or not owned by user" },
+        { error: "Element not found" },
         { status: 404 }
+      );
+    }
+
+    // Check if user owns the website that contains this element
+    if (element.website.userId !== session.user.id) {
+      return NextResponse.json(
+        { error: "You don't have access to this element" },
+        { status: 403 }
       );
     }
 
     // Update the element
     const updatedElement = await prisma.element.update({
       where: {
-        id: elementId
+        id,
       },
       data: {
+        name,
         selector,
-        description: description || ""
-      }
+      },
     });
 
     return NextResponse.json(updatedElement);
@@ -126,48 +142,60 @@ export async function PUT(
   }
 }
 
-// DELETE /api/elements/[id] - Delete element and all associated variants
+// DELETE /api/elements/[id] - Delete a specific element
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Params }
 ) {
   try {
     // Check authentication
     const session = await getServerSession(authOptions);
-    if (!session || !session.user) {
+    if (!session?.user) {
       return NextResponse.json(
         { error: "Unauthorized" },
         { status: 401 }
       );
     }
 
-    const elementId = params.id;
+    const { id } = params;
 
-    // Find element and check if it belongs to the user
-    const element = await prisma.element.findFirst({
+    // Find the element and verify ownership
+    const element = await prisma.element.findUnique({
       where: {
-        id: elementId,
+        id,
+      },
+      include: {
         website: {
-          userId: session.user.id
-        }
-      }
+          select: {
+            userId: true,
+          },
+        },
+      },
     });
 
     if (!element) {
       return NextResponse.json(
-        { error: "Element not found or not owned by user" },
+        { error: "Element not found" },
         { status: 404 }
       );
     }
 
-    // Delete the element (and all associated variants due to cascading delete)
+    // Check if user owns the website that contains this element
+    if (element.website.userId !== session.user.id) {
+      return NextResponse.json(
+        { error: "You don't have access to this element" },
+        { status: 403 }
+      );
+    }
+
+    // Delete the element (this will cascade delete variants and conditions)
     await prisma.element.delete({
       where: {
-        id: elementId
-      }
+        id,
+      },
     });
 
-    return NextResponse.json({ message: "Element deleted successfully" });
+    return NextResponse.json({ success: true });
   } catch (error) {
     console.error("Error deleting element:", error);
     return NextResponse.json(

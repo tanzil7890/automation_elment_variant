@@ -65,7 +65,7 @@ export default async function ElementsPage({ params }: { params: { id: string } 
             Manage the elements you want to personalize on {website.domain}
           </p>
         </div>
-        <Link href={`/dashboard/websites/${websiteId}/elements/new`}>
+        <Link href={`/dashboard/websites/${params.id}/elements/new`}>
           <Button>Add New Element</Button>
         </Link>
       </div>
@@ -76,7 +76,7 @@ export default async function ElementsPage({ params }: { params: { id: string } 
           <p className="text-muted-foreground mb-6">
             Elements are the parts of your website you want to personalize with different content variants.
           </p>
-          <Link href={`/dashboard/websites/${websiteId}/elements/new`}>
+          <Link href={`/dashboard/websites/${params.id}/elements/new`}>
             <Button>Add Your First Element</Button>
           </Link>
         </div>
@@ -121,7 +121,7 @@ export default async function ElementsPage({ params }: { params: { id: string } 
                   </td>
                   <td className="py-3 px-4">
                     <div className="flex space-x-2">
-                      <Link href={`/dashboard/websites/${websiteId}/elements/${element.id}`}>
+                      <Link href={`/dashboard/websites/${params.id}/elements/${element.id}`}>
                         <Button variant="ghost" size="sm">
                           View
                         </Button>

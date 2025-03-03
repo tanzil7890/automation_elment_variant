@@ -72,21 +72,21 @@ export default async function ElementDetailPage({
       <div className="flex justify-between items-center">
         <div>
           <div className="flex items-center gap-2 text-sm text-muted-foreground mb-1">
-            <Link href={`/dashboard/websites/${websiteId}`} className="hover:underline">
+            <Link href={`/dashboard/websites/${params.id}`} className="hover:underline">
               {typedElement.website.name}
             </Link>{" "}
             /{" "}
-            <Link href={`/dashboard/websites/${websiteId}/elements`} className="hover:underline">
+            <Link href={`/dashboard/websites/${params.id}/elements`} className="hover:underline">
               Elements
             </Link>
           </div>
           <h1 className="text-2xl font-bold">Element Details</h1>
         </div>
         <div className="flex gap-2">
-          <Link href={`/dashboard/websites/${websiteId}/elements/${elementId}/edit`}>
+          <Link href={`/dashboard/websites/${params.id}/elements/${elementId}/edit`}>
             <Button variant="outline">Edit Element</Button>
           </Link>
-          <Link href={`/dashboard/websites/${websiteId}/elements/${elementId}/variants/new`}>
+          <Link href={`/dashboard/websites/${params.id}/elements/${elementId}/variants/new`}>
             <Button>Add Variant</Button>
           </Link>
         </div>
@@ -133,7 +133,7 @@ export default async function ElementDetailPage({
             <p className="text-muted-foreground mb-6">
               Variants allow you to display different content for this element based on conditions.
             </p>
-            <Link href={`/dashboard/websites/${websiteId}/elements/${elementId}/variants/new`}>
+            <Link href={`/dashboard/websites/${params.id}/elements/${elementId}/variants/new`}>
               <Button>Add Your First Variant</Button>
             </Link>
           </div>
@@ -156,7 +156,7 @@ export default async function ElementDetailPage({
                     )}
                   </div>
                   <div className="flex gap-2">
-                    <Link href={`/dashboard/websites/${websiteId}/elements/${elementId}/variants/${variant.id}`}>
+                    <Link href={`/dashboard/websites/${params.id}/elements/${elementId}/variants/${variant.id}`}>
                       <Button variant="ghost" size="sm">
                         Edit
                       </Button>

@@ -54,7 +54,7 @@ export default function NewElementPage({ params }: { params: { id: string } }) {
       }
 
       // Navigate to elements page on success
-      router.push(`/dashboard/websites/${websiteId}/elements`);
+      router.push(`/dashboard/websites/${params.id}/elements`);
       router.refresh();
     } catch (err) {
       setError(err instanceof Error ? err.message : "An unexpected error occurred");
@@ -116,7 +116,7 @@ export default function NewElementPage({ params }: { params: { id: string } }) {
         </div>
 
         <div className="pt-4 flex justify-end space-x-4">
-          <Link href={`/dashboard/websites/${websiteId}/elements`}>
+          <Link href={`/dashboard/websites/${params.id}/elements`}>
             <Button variant="outline" type="button">
               Cancel
             </Button>

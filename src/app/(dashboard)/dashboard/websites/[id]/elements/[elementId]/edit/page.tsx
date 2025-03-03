@@ -93,7 +93,7 @@ export default function EditElementPage({
       }
 
       // Navigate back to element details page
-      router.push(`/dashboard/websites/${websiteId}/elements/${elementId}`);
+      router.push(`/dashboard/websites/${params.id}/elements/${elementId}`);
       router.refresh();
     } catch (err) {
       setError(err instanceof Error ? err.message : "An unexpected error occurred");
@@ -120,7 +120,7 @@ export default function EditElementPage({
       }
 
       // Navigate back to elements list
-      router.push(`/dashboard/websites/${websiteId}/elements`);
+      router.push(`/dashboard/websites/${params.id}/elements`);
       router.refresh();
     } catch (err) {
       setError(err instanceof Error ? err.message : "An unexpected error occurred");
@@ -199,7 +199,7 @@ export default function EditElementPage({
           </Button>
           
           <div className="flex space-x-4">
-            <Link href={`/dashboard/websites/${websiteId}/elements/${elementId}`}>
+            <Link href={`/dashboard/websites/${params.id}/elements/${elementId}`}>
               <Button type="button" className="border border-input bg-background hover:bg-accent hover:text-accent-foreground">
                 Cancel
               </Button>

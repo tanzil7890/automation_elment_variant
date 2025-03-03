@@ -1,3 +1,5 @@
+"use client";
+
 import { useState, useEffect } from "react";
 import {
   Table,
@@ -29,16 +31,12 @@ interface Condition {
 }
 
 interface ConditionsListProps {
-  variantId: string;
   elementId: string;
-  websiteId: string;
+  variantId: string;
+  id: string;
 }
 
-export default function ConditionsList({
-  variantId,
-  elementId,
-  websiteId,
-}: ConditionsListProps) {
+export default function ConditionsList({ elementId, variantId, id }: ConditionsListProps) {
   const [conditions, setConditions] = useState<Condition[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -211,7 +209,7 @@ export default function ConditionsList({
       <EmptyState
         title="No conditions found"
         description="Add conditions to control when this variant should be displayed"
-        actionLink={`/dashboard/websites/${websiteId}/elements/${elementId}/variants/${variantId}/conditions/new`}
+        actionLink={`/dashboard/websites/${id}/elements/${elementId}/variants/${variantId}/conditions/new`}
         actionLabel="Add Condition"
       />
     );
@@ -267,7 +265,7 @@ export default function ConditionsList({
                 </div>
               </TableCell>
               <TableCell className="text-right space-x-2">
-                <Link href={`/dashboard/websites/${websiteId}/elements/${elementId}/variants/${variantId}/conditions/${condition.id}/edit`}>
+                <Link href={`/dashboard/websites/${id}/elements/${elementId}/variants/${variantId}/conditions/${condition.id}/edit`}>
                   <Button variant="ghost" size="sm">
                     <Edit2Icon className="h-4 w-4" />
                   </Button>

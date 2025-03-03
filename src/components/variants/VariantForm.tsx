@@ -1,3 +1,5 @@
+"use client";
+
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
@@ -30,21 +32,21 @@ const variantFormSchema = z.object({
 type VariantFormValues = z.infer<typeof variantFormSchema>;
 
 interface VariantFormProps {
+  elementId: string;
+  id: string;
   variant?: {
     id: string;
     name: string;
     content: string;
     isDefault: boolean;
   };
-  elementId: string;
-  websiteId: string;
   isDefault?: boolean; // Used for creating the first variant
 }
 
 export default function VariantForm({
-  variant,
   elementId,
-  websiteId,
+  id,
+  variant,
   isDefault = false,
 }: VariantFormProps) {
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -97,7 +99,7 @@ export default function VariantForm({
       });
 
       // Redirect to variants list
-      router.push(`/dashboard/websites/${websiteId}/elements/${elementId}/variants`);
+      router.push(`/dashboard/websites/${id}/elements/${elementId}/variants`);
       router.refresh(); // Refresh the page to show updated data
     } catch (error) {
       console.error("Error saving variant:", error);

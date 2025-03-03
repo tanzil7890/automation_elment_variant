@@ -1,3 +1,5 @@
+"use client";
+
 import { useState, useEffect } from "react";
 import {
   Table,
@@ -29,10 +31,10 @@ interface Variant {
 
 interface VariantsListProps {
   elementId: string;
-  websiteId: string;
+  id: string;
 }
 
-export default function VariantsList({ elementId, websiteId }: VariantsListProps) {
+export default function VariantsList({ elementId, id }: VariantsListProps) {
   const [variants, setVariants] = useState<Variant[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -181,7 +183,7 @@ export default function VariantsList({ elementId, websiteId }: VariantsListProps
       <EmptyState
         title="No variants found"
         description="Create your first variant to get started"
-        actionLink={`/dashboard/websites/${websiteId}/elements/${elementId}/variants/new`}
+        actionLink={`/dashboard/websites/${id}/elements/${elementId}/variants/new`}
         actionLabel="Create Variant"
       />
     );
@@ -217,7 +219,7 @@ export default function VariantsList({ elementId, websiteId }: VariantsListProps
                 )}
               </TableCell>
               <TableCell>
-                <Link href={`/dashboard/websites/${websiteId}/elements/${elementId}/variants/${variant.id}/conditions`}>
+                <Link href={`/dashboard/websites/${id}/elements/${elementId}/variants/${variant.id}/conditions`}>
                   <Button variant="ghost" size="sm">
                     {variant.conditionsCount || 0} Conditions
                     <SettingsIcon className="h-4 w-4 ml-2" />
@@ -226,7 +228,7 @@ export default function VariantsList({ elementId, websiteId }: VariantsListProps
               </TableCell>
               <TableCell>{new Date(variant.updatedAt).toLocaleDateString()}</TableCell>
               <TableCell className="text-right space-x-2">
-                <Link href={`/dashboard/websites/${websiteId}/elements/${elementId}/variants/${variant.id}/edit`}>
+                <Link href={`/dashboard/websites/${id}/elements/${elementId}/variants/${variant.id}/edit`}>
                   <Button variant="ghost" size="sm">
                     <Edit2Icon className="h-4 w-4" />
                   </Button>

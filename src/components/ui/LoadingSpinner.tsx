@@ -1,3 +1,5 @@
+"use client";
+
 import { Loader2 } from "lucide-react";
 
 interface LoadingSpinnerProps {
@@ -10,11 +12,8 @@ export default function LoadingSpinner({
   className = "text-black" 
 }: LoadingSpinnerProps) {
   return (
-    <div className="flex justify-center items-center p-6">
-      <Loader2 
-        className={`animate-spin text-black ${className}`} 
-        size={size} 
-      />
+    <div className="flex items-center justify-center p-4">
+      <Loader2 className={`animate-spin ${className}`} size={size} />
     </div>
   );
 } 
