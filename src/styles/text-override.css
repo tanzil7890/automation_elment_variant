@@ -1,0 +1,68 @@
+/**
+ * Element Variants - Text Color Override
+ * 
+ * This file contains global overrides for text colors
+ * to ensure consistent black text throughout the application.
+ */
+
+/* Primary override for all text elements */
+* {
+  color: #000000;
+}
+
+/* Specific element overrides */
+body, p, h1, h2, h3, h4, h5, h6, span, div, label {
+  color: #000000 !important;
+}
+
+/* Form elements */
+input, select, textarea, button {
+  color: #000000 !important;
+}
+
+/* Links */
+a, a:hover, a:visited, a:active {
+  color: #000000 !important;
+}
+
+/* Tailwind class overrides */
+.text-primary, 
+.text-secondary,
+.text-accent,
+.text-muted,
+.text-muted-foreground,
+.text-foreground {
+  color: #000000 !important;
+}
+
+/* Button text */
+button span,
+.btn span {
+  color: #000000 !important;
+}
+
+/* Icons and SVGs */
+svg, svg path {
+  color: #000000 !important;
+  fill: #000000 !important;
+}
+
+/* Loaders and spinners */
+.loader, 
+.spinner, 
+[class*="Loader"], 
+[class*="Spinner"] {
+  color: #000000 !important;
+}
+
+/* Placeholders */
+::placeholder {
+  color: rgba(0, 0, 0, 0.6) !important;
+}
+
+/* Input focus states */
+input:focus, 
+textarea:focus, 
+select:focus {
+  color: #000000 !important;
+} 

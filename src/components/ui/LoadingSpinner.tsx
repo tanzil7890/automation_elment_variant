@@ -7,12 +7,12 @@ interface LoadingSpinnerProps {
 
 export default function LoadingSpinner({ 
   size = 24, 
-  className = "text-primary" 
+  className = "text-black" 
 }: LoadingSpinnerProps) {
   return (
     <div className="flex justify-center items-center p-6">
       <Loader2 
-        className={`animate-spin ${className}`} 
+        className={`animate-spin text-black ${className}`} 
         size={size} 
       />
     </div>

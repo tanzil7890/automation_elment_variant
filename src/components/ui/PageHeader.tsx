@@ -24,22 +24,22 @@ export default function PageHeader({
     <div className="mb-8">
       {breadcrumbLinks.length > 0 && (
         <nav className="flex mb-4 text-sm">
-          <ol className="flex items-center space-x-1 text-gray-500">
+          <ol className="flex items-center space-x-1 text-black">
             <li>
-              <Link href="/dashboard" className="hover:text-gray-700 flex items-center">
-                <HomeIcon className="h-4 w-4 mr-1" />
+              <Link href="/dashboard" className="hover:text-black flex items-center text-black">
+                <HomeIcon className="h-4 w-4 mr-1 text-black" />
                 Home
               </Link>
             </li>
             {breadcrumbLinks.map((link, index) => (
               <li key={index} className="flex items-center">
-                <ChevronRightIcon className="h-4 w-4 mx-1" />
+                <ChevronRightIcon className="h-4 w-4 mx-1 text-black" />
                 {index === breadcrumbLinks.length - 1 ? (
-                  <span className="text-gray-900 font-medium">{link.title}</span>
+                  <span className="text-black font-medium">{link.title}</span>
                 ) : (
                   <Link
                     href={link.href}
-                    className="hover:text-gray-700"
+                    className="hover:text-black text-black"
                   >
                     {link.title}
                   </Link>
@@ -51,9 +51,9 @@ export default function PageHeader({
       )}
       <div className="flex justify-between items-center">
         <div>
-          <h1 className="text-2xl font-bold tracking-tight">{title}</h1>
+          <h1 className="text-2xl font-bold tracking-tight text-black">{title}</h1>
           {description && (
-            <p className="text-gray-500 mt-2">{description}</p>
+            <p className="text-black mt-2">{description}</p>
           )}
         </div>
         {children && <div>{children}</div>}
